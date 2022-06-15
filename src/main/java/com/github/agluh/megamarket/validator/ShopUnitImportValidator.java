@@ -6,6 +6,9 @@ import javax.validation.ConstraintValidatorContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Validator for catalog item.
+ */
 @Component
 @AllArgsConstructor
 public class ShopUnitImportValidator implements

@@ -2,7 +2,7 @@ package com.github.agluh.megamarket.repository.impl;
 
 import com.github.agluh.megamarket.model.ShopUnitStatistic;
 import com.github.agluh.megamarket.model.ShopUnitType;
-import com.github.agluh.megamarket.repository.ShopUnitStatisticRepository;
+import com.github.agluh.megamarket.repository.ShopUnitStatisticReadModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class ShopUnitStatisticRepositoryImpl implements ShopUnitStatisticRepository {
+public class ShopUnitStatisticReadModelImpl implements ShopUnitStatisticReadModel {
 
     public static final String SELECT_NODES = """
         SELECT element_id, parent_id, element_name, price, last_update, element_type

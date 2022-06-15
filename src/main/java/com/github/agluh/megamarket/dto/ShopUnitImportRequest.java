@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO for catalog items import request.
+ */
 @NoArgsConstructor
 @Getter
 @Setter

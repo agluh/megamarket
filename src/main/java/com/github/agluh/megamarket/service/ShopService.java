@@ -4,7 +4,7 @@ import com.github.agluh.megamarket.dto.ShopUnitImport;
 import com.github.agluh.megamarket.model.ShopUnit;
 import com.github.agluh.megamarket.model.ShopUnitStatistic;
 import com.github.agluh.megamarket.repository.ShopUnitRepository;
-import com.github.agluh.megamarket.repository.ShopUnitStatisticRepository;
+import com.github.agluh.megamarket.repository.ShopUnitStatisticReadModel;
 import com.github.agluh.megamarket.service.exceptions.IdentityIsNotUniqueException;
 import com.github.agluh.megamarket.service.exceptions.ShopUnitNotFoundException;
 import java.time.Instant;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Provides management for shop related tasks.
+ * Provides management for catalog related tasks.
  */
 @Service
 @AllArgsConstructor
@@ -32,7 +32,7 @@ public class ShopService {
 
     private final ShopUnitRepository unitRepository;
 
-    private final ShopUnitStatisticRepository statisticRepository;
+    private final ShopUnitStatisticReadModel statisticRepository;
 
     /**
      * Imports data into catalog.

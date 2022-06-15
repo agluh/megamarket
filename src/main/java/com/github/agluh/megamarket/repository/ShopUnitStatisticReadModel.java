@@ -5,8 +5,14 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.UUID;
 
-public interface ShopUnitStatisticRepository {
+/**
+ * Read model for statistic of a catalog item.
+ */
+public interface ShopUnitStatisticReadModel {
 
+    /**
+     * Returns list of statistics elements for catalog item.
+     */
     Collection<ShopUnitStatistic> getNodeStatistics(UUID nodeId, Instant fromIncluding,
         Instant toExcluding);
 }

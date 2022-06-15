@@ -8,6 +8,9 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 
+/**
+ * Helper serializer for dates.
+ */
 public class InstantSerializer extends JsonSerializer<Instant> {
 
     public static DateTimeFormatter ISO8601_DATE_TIME =

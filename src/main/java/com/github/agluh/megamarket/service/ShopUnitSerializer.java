@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 
+/**
+ * Serializer of a catalog element.
+ */
 public class ShopUnitSerializer extends JsonSerializer<ShopUnit> {
 
     public static DateTimeFormatter ISO8601_DATE_TIME =

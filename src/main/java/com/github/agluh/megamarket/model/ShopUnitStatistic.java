@@ -8,6 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Represents statistics of catalog item.
+ */
 @RequiredArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -22,7 +25,6 @@ public class ShopUnitStatistic {
 
     private final Long price;
 
-  //  @JsonFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonSerialize(using = InstantSerializer.class)
     private final Instant date;
 

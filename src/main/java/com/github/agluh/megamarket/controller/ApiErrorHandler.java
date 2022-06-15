@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+/**
+ * Error handler for REST API.
+ */
 @ControllerAdvice
 @Slf4j
 public class ApiErrorHandler {

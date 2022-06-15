@@ -12,12 +12,9 @@ spring:
     deserialization:
       FAIL_ON_UNKNOWN_PROPERTIES: true
 
-  mvc:
-    throw-exception-if-no-handler-found: true
-
-  web:
-    resources:
-      add-mappings: false
-
   jpa:
     open-in-view: false
+
+springdoc:
+    swagger-ui:
+      url: /docs/openapi.yaml

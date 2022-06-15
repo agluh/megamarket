@@ -11,6 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO for catalog item import.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
