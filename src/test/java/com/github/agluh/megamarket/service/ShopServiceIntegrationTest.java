@@ -1,16 +1,14 @@
 package com.github.agluh.megamarket.service;
 
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.BDDAssertions.then;
 
+import com.github.agluh.megamarket.dto.ShopUnit;
 import com.github.agluh.megamarket.dto.ShopUnitImport;
-import com.github.agluh.megamarket.model.ShopUnit;
-import com.github.agluh.megamarket.model.ShopUnitType;
+import com.github.agluh.megamarket.dto.ShopUnitType;
 import com.github.agluh.megamarket.repository.exception.InvalidIdentityException;
 import com.github.agluh.megamarket.service.exceptions.ShopUnitNotFoundException;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;

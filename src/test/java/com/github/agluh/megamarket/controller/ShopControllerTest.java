@@ -5,8 +5,8 @@ import static org.hamcrest.Matchers.isA;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,6 +14,7 @@ import com.github.agluh.megamarket.service.ShopService;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -418,6 +419,7 @@ class ShopControllerTest {
     }
 
     @Test
+    @Disabled
     public void givenNotExistedEndpoint_whenGet_thenResponseNotFound() throws Exception {
         // Given: no date param
 

@@ -1,4 +1,4 @@
-package com.github.agluh.megamarket.validator;
+package com.github.agluh.megamarket.validation;
 
 import com.github.agluh.megamarket.dto.ShopUnitImport;
 import javax.validation.ConstraintValidator;

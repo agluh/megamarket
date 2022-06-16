@@ -1,6 +1,6 @@
 package com.github.agluh.megamarket.repository;
 
-import com.github.agluh.megamarket.model.ShopUnitStatistic;
+import com.github.agluh.megamarket.dto.ShopUnitStatistic;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.UUID;

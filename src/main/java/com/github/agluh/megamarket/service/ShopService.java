@@ -1,14 +1,19 @@
 package com.github.agluh.megamarket.service;
 
+import com.github.agluh.megamarket.dto.ShopUnit;
 import com.github.agluh.megamarket.dto.ShopUnitImport;
-import com.github.agluh.megamarket.model.ShopUnit;
-import com.github.agluh.megamarket.model.ShopUnitStatistic;
-import com.github.agluh.megamarket.repository.ShopUnitRepository;
+import com.github.agluh.megamarket.dto.ShopUnitStatistic;
+import com.github.agluh.megamarket.model.Category;
+import com.github.agluh.megamarket.model.Offer;
+import com.github.agluh.megamarket.repository.CategoryRepository;
+import com.github.agluh.megamarket.repository.OfferRepository;
+import com.github.agluh.megamarket.repository.ShopUnitReadModel;
 import com.github.agluh.megamarket.repository.ShopUnitStatisticReadModel;
 import com.github.agluh.megamarket.service.exceptions.IdentityIsNotUniqueException;
 import com.github.agluh.megamarket.service.exceptions.ShopUnitNotFoundException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,7 +35,11 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class ShopService {
 
-    private final ShopUnitRepository unitRepository;
+    private final OfferRepository offerRepository;
+
+    private final CategoryRepository categoryRepository;
+
+    private final ShopUnitReadModel shopUnitReadModel;
 
     private final ShopUnitStatisticReadModel statisticRepository;
 
@@ -55,39 +64,34 @@ public class ShopService {
      */
     @Transactional
     public void importData(Collection<ShopUnitImport> items, Instant updateDate) {
-        List<ShopUnit> nodes = items.stream()
-            .map(e -> e.toModel(updateDate))
+        List<Category> categories = items.stream()
+            .filter(ShopUnitImport::isCategory)
+            .map(e -> e.toCategory(updateDate))
             .toList();
 
-        List<ShopUnit> categories = nodes.stream()
-            .filter(ShopUnit::isCategory)
-            .toList();
-
-        Collection<ShopUnit> categoriesTree = buildTree(categories);
-        List<ShopUnit> orderedCategories = flattenTree(categoriesTree);
-
-        if (!orderedCategories.isEmpty()) {
-            unitRepository.saveCategories(orderedCategories);
+        if (!categories.isEmpty()) {
+            categoryRepository.save(orderByDependency(categories));
         }
 
-        List<ShopUnit> offers = nodes.stream()
-            .filter(ShopUnit::isOffer)
+        List<Offer> offers = items.stream()
+            .filter(ShopUnitImport::isOffer)
+            .map(e -> e.toOffer(updateDate))
             .toList();
 
         if (!offers.isEmpty()) {
-            unitRepository.saveOffers(offers);
+            offerRepository.save(offers);
         }
 
         Set<UUID> affectedCategoriesIds = offers.stream()
-            .map(ShopUnit::getParentId)
+            .map(Offer::getParentId)
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
         if (!affectedCategoriesIds.isEmpty()) {
-            unitRepository.updateCategoriesPricesAndDates(affectedCategoriesIds, updateDate);
+            categoryRepository.updateCategoriesPricesAndDates(affectedCategoriesIds, updateDate);
         }
 
-        unitRepository.updatePricesAndDatesOfOrphanedCategories(updateDate);
+        categoryRepository.updatePricesAndDatesOfOrphanedCategories(updateDate);
     }
 
     /**
@@ -100,15 +104,12 @@ public class ShopService {
      * @throws ShopUnitNotFoundException in case element not found by its identity
      */
     public ShopUnit getNode(UUID nodeId) {
-        Collection<ShopUnit> nodes = unitRepository.getNodeWithSubtree(nodeId);
+        Collection<ShopUnit> nodes = shopUnitReadModel.getNodeWithSubtree(nodeId);
         if (nodes.isEmpty()) {
             throw new ShopUnitNotFoundException();
         }
 
-        Collection<ShopUnit> tree = buildTree(nodes);
-        assert (tree.size() == 1);
-
-        return tree.iterator().next();
+        return buildTree(nodes);
     }
 
     /**
@@ -124,14 +125,18 @@ public class ShopService {
      */
     @Transactional
     public void deleteNode(UUID nodeId) {
-        ShopUnit node = unitRepository.getNode(nodeId)
+        ShopUnit node = shopUnitReadModel.getNode(nodeId)
             .orElseThrow(ShopUnitNotFoundException::new);
 
-        unitRepository.deleteNode(node);
+        if (node.isCategory()) {
+            categoryRepository.delete(node.getId());
+        } else {
+            offerRepository.delete(node.getId());
+        }
 
         UUID parentId = node.getParentId();
         if (parentId != null) {
-            unitRepository.updateUpstreamCategoriesPricesStartingWith(parentId);
+            categoryRepository.updateUpstreamCategoriesPricesStartingWith(parentId);
         }
     }
 
@@ -140,22 +145,22 @@ public class ShopService {
      */
     public Collection<ShopUnit> getSales(Instant now) {
         Instant from = now.minus(24, ChronoUnit.HOURS);
-        return unitRepository.getOffersUpdatedBetween(from, now);
+        return shopUnitReadModel.getOffersUpdatedBetween(from, now);
     }
 
     public Collection<ShopUnitStatistic> getNodeStatistics(UUID nodeId, Instant fromIncluding,
             Instant toExcluding) {
-        unitRepository.getNode(nodeId).orElseThrow(ShopUnitNotFoundException::new);
+        shopUnitReadModel.getNode(nodeId).orElseThrow(ShopUnitNotFoundException::new);
         return statisticRepository.getNodeStatistics(nodeId, fromIncluding, toExcluding);
     }
 
     /**
-     * Builds a tree from flat list of elements.
+     * Builds a tree from flat collection of elements.
      *
-     * @return collection of top level nodes from the tree
+     * @return root of the tree
      * @throws IdentityIsNotUniqueException in case ids are not unique
      */
-    private Collection<ShopUnit> buildTree(Collection<ShopUnit> flatList) {
+    private ShopUnit buildTree(Collection<ShopUnit> flatList) {
         Map<UUID, ShopUnit> map = new HashMap<>();
 
         flatList.forEach(item -> {
@@ -179,17 +184,59 @@ public class ShopService {
 
         return map.values().stream()
             .filter(ShopUnit::isTopLevel)
-            .collect(Collectors.toList());
+            .findFirst().get();
     }
 
-    private List<ShopUnit> flattenTree(Collection<ShopUnit> categoriesTree) {
-        Queue<ShopUnit> queue = new LinkedList<>(categoriesTree);
-        List<ShopUnit> orderedCategories = new LinkedList<>();
+    /**
+     * Reorders collection so that parent elements goes before any of their children.
+     */
+    private Collection<Category> orderByDependency(Collection<Category> categories) {
+        class Node<T> {
+            final T data;
+            final List<Node<T>> children = new ArrayList<>();
+            boolean isTopLevel = false;
+
+            public Node(T data) {
+                this.data = data;
+            }
+
+            public boolean isTopLevel() {
+                return isTopLevel;
+            }
+        }
+
+        Map<UUID, Node<Category>> map = new HashMap<>();
+
+        categories.forEach(item -> {
+            if (map.containsKey(item.getId())) {
+                throw new IdentityIsNotUniqueException();
+            } else {
+                map.put(item.getId(), new Node<>(item));
+            }
+        });
+
+        for (Node<Category> n : map.values()) {
+            UUID parentId = n.data.getParentId();
+            if (parentId == null || !map.containsKey(parentId)) {
+                n.isTopLevel = true;
+                continue;
+            }
+
+            Node<Category> parent = map.get(parentId);
+            parent.children.add(n);
+        }
+
+        List<Node<Category>> topNodes = map.values().stream()
+            .filter(Node::isTopLevel)
+            .toList();
+
+        Queue<Node<Category>> queue = new LinkedList<>(topNodes);
+        List<Category> orderedCategories = new LinkedList<>();
 
         while (!queue.isEmpty()) {
-            ShopUnit s = queue.poll();
-            orderedCategories.add(s);
-            queue.addAll(s.getChildren());
+            Node<Category> n = queue.poll();
+            orderedCategories.add(n.data);
+            queue.addAll(n.children);
         }
 
         return orderedCategories;

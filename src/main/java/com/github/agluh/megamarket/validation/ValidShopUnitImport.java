@@ -1,4 +1,4 @@
-package com.github.agluh.megamarket.validator;
+package com.github.agluh.megamarket.validation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

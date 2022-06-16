@@ -1,7 +1,7 @@
 package com.github.agluh.megamarket.repository.impl;
 
-import com.github.agluh.megamarket.model.ShopUnitStatistic;
-import com.github.agluh.megamarket.model.ShopUnitType;
+import com.github.agluh.megamarket.dto.ShopUnitStatistic;
+import com.github.agluh.megamarket.dto.ShopUnitType;
 import com.github.agluh.megamarket.repository.ShopUnitStatisticReadModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +15,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+/**
+ * DB based implementation of read model for statistics of catalog item.
+ */
 @Component
 @AllArgsConstructor
 public class ShopUnitStatisticReadModelImpl implements ShopUnitStatisticReadModel {
@@ -36,8 +39,8 @@ public class ShopUnitStatisticReadModelImpl implements ShopUnitStatisticReadMode
             throw new IllegalArgumentException("Incorrect range");
         }
 
-        Map<String, Object> params = new HashMap<>();
         String sql = SELECT_NODES;
+        Map<String, Object> params = new HashMap<>();
         params.put("node_id", nodeId);
 
         if (fromIncluding != null) {

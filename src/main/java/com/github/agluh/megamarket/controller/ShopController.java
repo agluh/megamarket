@@ -1,8 +1,8 @@
 package com.github.agluh.megamarket.controller;
 
+import com.github.agluh.megamarket.dto.ShopUnit;
 import com.github.agluh.megamarket.dto.ShopUnitImportRequest;
 import com.github.agluh.megamarket.dto.ShopUnitStatisticResponse;
-import com.github.agluh.megamarket.model.ShopUnit;
 import com.github.agluh.megamarket.service.ShopService;
 import java.time.Instant;
 import java.time.OffsetDateTime;

@@ -1,7 +1,7 @@
-package com.github.agluh.megamarket.model;
+package com.github.agluh.megamarket.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.github.agluh.megamarket.service.ShopUnitSerializer;
+import com.github.agluh.megamarket.serialization.ShopUnitSerializer;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;

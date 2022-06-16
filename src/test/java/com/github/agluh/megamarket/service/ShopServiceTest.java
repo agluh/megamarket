@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.BDDMockito.given;
 
-import com.github.agluh.megamarket.repository.ShopUnitRepository;
+import com.github.agluh.megamarket.repository.ShopUnitReadModel;
 import com.github.agluh.megamarket.service.exceptions.ShopUnitNotFoundException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ShopServiceTest {
 
     @Mock
-    private ShopUnitRepository shopUnitRepository;
+    private ShopUnitReadModel shopUnitReadModel;
 
     @InjectMocks
     private ShopService shopService;
@@ -26,7 +26,7 @@ class ShopServiceTest {
     void givenNonExistedNode_whenGetNode_thenWillThrowException() {
         // Given
         final UUID nonExistedNodeId = UUID.randomUUID();
-        given(shopUnitRepository.getNodeWithSubtree(nonExistedNodeId))
+        given(shopUnitReadModel.getNodeWithSubtree(nonExistedNodeId))
             .willThrow(ShopUnitNotFoundException.class);
 
         // When
@@ -42,7 +42,7 @@ class ShopServiceTest {
     void givenNonExistedNode_whenDeleteNode_thenWillThrowException() {
         // Given
         final UUID nonExistedNodeId = UUID.randomUUID();
-        given(shopUnitRepository.getNode(nonExistedNodeId))
+        given(shopUnitReadModel.getNode(nonExistedNodeId))
             .willThrow(ShopUnitNotFoundException.class);
 
         // When

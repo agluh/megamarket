@@ -1,9 +1,9 @@
-package com.github.agluh.megamarket.service;
+package com.github.agluh.megamarket.serialization;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.github.agluh.megamarket.model.ShopUnit;
+import com.github.agluh.megamarket.dto.ShopUnit;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;

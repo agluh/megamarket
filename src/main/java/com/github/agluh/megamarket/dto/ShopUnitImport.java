@@ -1,8 +1,8 @@
 package com.github.agluh.megamarket.dto;
 
-import com.github.agluh.megamarket.model.ShopUnit;
-import com.github.agluh.megamarket.model.ShopUnitType;
-import com.github.agluh.megamarket.validator.ValidShopUnitImport;
+import com.github.agluh.megamarket.model.Category;
+import com.github.agluh.megamarket.model.Offer;
+import com.github.agluh.megamarket.validation.ValidShopUnitImport;
 import java.time.Instant;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
@@ -42,7 +42,11 @@ public class ShopUnitImport {
         return type == ShopUnitType.OFFER;
     }
 
-    public ShopUnit toModel(Instant updateDate) {
-        return new ShopUnit(id, parentId, name, price, updateDate, type);
+    public Category toCategory(Instant updateDate) {
+        return new Category(id, parentId, name, price, updateDate);
+    }
+
+    public Offer toOffer(Instant updateDate) {
+        return new Offer(id, parentId, name, price, updateDate);
     }
 }
