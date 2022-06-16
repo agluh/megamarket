@@ -33,7 +33,7 @@ public class ApiErrorHandler {
     @ExceptionHandler({ MethodArgumentNotValidException.class,
         HttpMessageNotReadableException.class, ConstraintViolationException.class,
         IdentityIsNotUniqueException.class, DateTimeParseException.class,
-        MissingServletRequestParameterException.class })
+        MissingServletRequestParameterException.class, IllegalArgumentException.class })
     protected ResponseEntity<Object> handleMalformedRequest(Throwable ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ApiError apiError = new ApiError(status.value(), "Validation failed");
