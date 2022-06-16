@@ -1,58 +1,58 @@
 package com.github.agluh.megamarket.controller;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.github.agluh.megamarket.service.ShopService;
+import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
-@WebMvcTest(ShopController.class)
-class ShopControllerTest {
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+class ShopControllerIntegrationTest {
 
     @MockBean
     private ShopService shopService;
 
     @Autowired
-    private MockMvc mvc;
+    private TestRestTemplate restTemplate;
+
+    @LocalServerPort
+    private int randomServerPort;
 
     @ParameterizedTest(name = "{1}")
     @MethodSource("provideBadDataForImporting")
-    public void givenIncorrectImportData_whenPost_thenResponseBadRequest(String data, String message) throws Exception {
-        // Given: data from argument
+    public void givenIncorrectImportData_whenPost_thenResponseBadRequest(String data, String message) {
+        // Given
+        final String baseUrl = "http://localhost:" + randomServerPort;
 
         // When
-        ResultActions result = mvc.perform(
-            post("/imports")
-                .content(data)
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity = doJsonPost(baseUrl + "/imports", data);
 
         // Then
-        result.andExpect(status().isBadRequest());
-        result.andExpect(jsonPath("$.code", isA(Integer.class)));
-        result.andExpect(jsonPath("$.code", is(400)));
-        result.andExpect(jsonPath("$.message", isA(String.class)));
-        result.andExpect(jsonPath("$.message", is("Validation failed")));
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        then(responseEntity.getBody()).extracting("code").isEqualTo(400);
+        then(responseEntity.getBody()).extracting("message").isEqualTo("Bad Request");
     }
 
     private static Stream<Arguments> provideBadDataForImporting() {
@@ -249,17 +249,15 @@ class ShopControllerTest {
 
     @ParameterizedTest(name = "{1}")
     @MethodSource("provideCorrectDataForImporting")
-    public void givenCorrectImportData_whenPost_thenResponseOk(String data, String message) throws Exception {
-        // Given: data from argument
+    public void givenCorrectImportData_whenPost_thenResponseOk(String data, String message) {
+        // Given
+        final String baseUrl = "http://localhost:" + randomServerPort;
 
         // When
-        ResultActions result = mvc.perform(
-            post("/imports")
-                .content(data)
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity = doJsonPost(baseUrl + "/imports", data);
 
         // Then
-        result.andExpect(status().isOk());
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     private static Stream<Arguments> provideCorrectDataForImporting() {
@@ -323,8 +321,9 @@ class ShopControllerTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "/iso8601_dates.csv")
-    public void givenCorrectImportDate_whenPost_thenResponseOk(String date) throws Exception {
-        // Given: date from argument
+    public void givenCorrectImportDate_whenPost_thenResponseOk(String date) {
+        // Given
+        final String baseUrl = "http://localhost:" + randomServerPort;
         final String json = """
             {
                 "items": [],
@@ -333,19 +332,17 @@ class ShopControllerTest {
         """;
 
         // When
-        ResultActions result = mvc.perform(
-            post("/imports")
-                .content(String.format(json, date))
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity = doJsonPost(baseUrl + "/imports", String.format(json, date));
 
         // Then
-        result.andExpect(status().isOk());
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/iso8601_invalid_dates.csv")
-    public void givenInvalidImportDate_whenPost_thenResponseBadRequest(String date) throws Exception {
-        // Given: date from argument
+    public void givenInvalidImportDate_whenPost_thenResponseBadRequest(String date) {
+        // Given
+        final String baseUrl = "http://localhost:" + randomServerPort;
         final String json = """
             {
                 "items": [],
@@ -354,104 +351,103 @@ class ShopControllerTest {
         """;
 
         // When
-        ResultActions result = mvc.perform(
-            post("/imports")
-                .content(String.format(json, date))
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity = doJsonPost(baseUrl + "/imports", String.format(json, date));
 
         // Then
-        result.andExpect(status().isBadRequest());
-        result.andExpect(jsonPath("$.code", isA(Integer.class)));
-        result.andExpect(jsonPath("$.code", is(400)));
-        result.andExpect(jsonPath("$.message", isA(String.class)));
-        result.andExpect(jsonPath("$.message", is("Validation failed")));
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        then(responseEntity.getBody()).extracting("code").isEqualTo(400);
+        then(responseEntity.getBody()).extracting("message").isEqualTo("Bad Request");
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/iso8601_dates.csv")
-    public void givenCorrectDate_whenGetSales_thenResponseOk(String date) throws Exception {
+    public void givenCorrectDate_whenGetSales_thenResponseOk(String date) {
         // Given: date from argument
+        final String baseUrl = "http://localhost:" + randomServerPort;
+        URI uri = UriComponentsBuilder.fromUriString(baseUrl + "/sales?date={date}").build(date);
 
         // When
-        ResultActions result = mvc.perform(
-            get("/sales")
-                .param("date", date)
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity =
+            restTemplate.getForEntity(uri, Object.class);
 
         // Then
-        result.andExpect(status().isOk());
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/iso8601_invalid_dates.csv")
-    public void givenInvalidDate_whenGetSales_thenResponseBadRequest(String date) throws Exception {
+    public void givenInvalidDate_whenGetSales_thenResponseBadRequest(String date) {
         // Given: date from argument
+        final String baseUrl = "http://localhost:" + randomServerPort;
+        URI uri = UriComponentsBuilder.fromUriString(baseUrl + "/sales?date={date}").build(date);
 
         // When
-        ResultActions result = mvc.perform(
-            get("/sales")
-                .param("date", date)
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity =
+            restTemplate.getForEntity(uri, Object.class);
 
         // Then
-        result.andExpect(status().isBadRequest());
-        result.andExpect(jsonPath("$.code", isA(Integer.class)));
-        result.andExpect(jsonPath("$.code", is(400)));
-        result.andExpect(jsonPath("$.message", isA(String.class)));
-        result.andExpect(jsonPath("$.message", is("Validation failed")));
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        then(responseEntity.getBody()).extracting("code").isEqualTo(400);
+        then(responseEntity.getBody()).extracting("message").isEqualTo("Bad Request");
     }
 
     @Test
-    public void givenMissedDateParam_whenGetSales_thenResponseBadRequest() throws Exception {
-        // Given: no date param
+    public void givenMissedDateParam_whenGetSales_thenResponseBadRequest() {
+        // Given
+        final String baseUrl = "http://localhost:" + randomServerPort;
 
         // When
-        ResultActions result = mvc.perform(
-            get("/sales")
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity =
+            restTemplate.getForEntity(baseUrl + "/sales", Object.class);
 
         // Then
-        result.andExpect(status().isBadRequest());
-        result.andExpect(jsonPath("$.code", isA(Integer.class)));
-        result.andExpect(jsonPath("$.code", is(400)));
-        result.andExpect(jsonPath("$.message", isA(String.class)));
-        result.andExpect(jsonPath("$.message", is("Validation failed")));
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        then(responseEntity.getBody()).extracting("code").isEqualTo(400);
+        then(responseEntity.getBody()).extracting("message").isEqualTo("Bad Request");
     }
 
     @Test
-    @Disabled
-    public void givenNotExistedEndpoint_whenGet_thenResponseNotFound() throws Exception {
-        // Given: no date param
+    public void givenNotExistedEndpoint_whenGet_thenResponseNotFound() {
+        // Given
+        final String baseUrl = "http://localhost:" + randomServerPort;
 
         // When
-        ResultActions result = mvc.perform(
-            get("/foo")
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity =
+            restTemplate.getForEntity(baseUrl + "/foo", Object.class);
 
         // Then
-        result.andExpect(status().isNotFound());
-        result.andExpect(jsonPath("$.code", isA(Integer.class)));
-        result.andExpect(jsonPath("$.code", is(404)));
-        result.andExpect(jsonPath("$.message", isA(String.class)));
-        result.andExpect(jsonPath("$.message", is("Item not found")));
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        then(responseEntity.getBody()).extracting("code").isEqualTo(404);
+        then(responseEntity.getBody()).extracting("message").isEqualTo("Not Found");
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/iso8601_dates.csv")
-    public void givenCorrectDate_whenGetNodeStatistics_thenResponseOk(String date) throws Exception {
-        // Given: date from argument
+    public void givenCorrectDate_whenGetNodeStatistics_thenResponseOk(String date) {
+        // Given
         final UUID nodeId = UUID.randomUUID();
         given(shopService.getNodeStatistics(eq(nodeId), any(), any()))
             .willReturn(Collections.emptyList());
 
+        final String baseUrl = "http://localhost:" + randomServerPort;
+        URI uri = UriComponentsBuilder.fromUriString(baseUrl +
+                "/node/{id}/statistic?dateStart={from}&dateEnd={to}")
+            .build(nodeId, date, date);
+
         // When
-        ResultActions result = mvc.perform(
-            get("/node/" + nodeId + "/statistic")
-                .param("from", date)
-                .param("to", date)
-                .contentType(MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity =
+            restTemplate.getForEntity(uri, Object.class);
 
         // Then
-        result.andExpect(status().isOk());
+        then(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    private ResponseEntity<Object> doJsonPost(String url, String json) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(json, headers);
+
+        return restTemplate.postForEntity(url, request, Object.class);
     }
 }
