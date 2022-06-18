@@ -64,6 +64,8 @@ public class ShopService {
      */
     @Transactional
     public void importData(Collection<ShopUnitImport> items, Instant updateDate) {
+        ensureIdUniqueness(items);
+
         List<Category> categories = items.stream()
             .filter(ShopUnitImport::isCategory)
             .map(e -> e.toCategory(updateDate))
@@ -205,15 +207,8 @@ public class ShopService {
             }
         }
 
-        Map<UUID, Node<Category>> map = new HashMap<>();
-
-        categories.forEach(item -> {
-            if (map.containsKey(item.getId())) {
-                throw new IdentityIsNotUniqueException();
-            } else {
-                map.put(item.getId(), new Node<>(item));
-            }
-        });
+        Map<UUID, Node<Category>> map =
+            categories.stream().collect(Collectors.toMap(Category::getId, Node::new));
 
         for (Node<Category> n : map.values()) {
             UUID parentId = n.data.getParentId();
@@ -240,5 +235,17 @@ public class ShopService {
         }
 
         return orderedCategories;
+    }
+
+    private void ensureIdUniqueness(Collection<ShopUnitImport> items) {
+        Map<UUID, ShopUnitImport> map = new HashMap<>();
+
+        items.forEach(item -> {
+            if (map.containsKey(item.getId())) {
+                throw new IdentityIsNotUniqueException();
+            } else {
+                map.put(item.getId(), item);
+            }
+        });
     }
 }

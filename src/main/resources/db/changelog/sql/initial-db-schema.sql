@@ -31,7 +31,8 @@ CREATE TABLE categories_statistics (
     parent_id UUID,
     category_name VARCHAR NOT NULL,
     price BIGINT,
-    last_update TIMESTAMP WITH TIME ZONE NOT NULL
+    last_update TIMESTAMP WITH TIME ZONE NOT NULL,
+    CONSTRAINT entry_unique UNIQUE (category_id, last_update)
 );
 
 CREATE VIEW common_statistics AS
@@ -75,7 +76,11 @@ CREATE FUNCTION insert_category_statistics()
 $$
 BEGIN
     INSERT INTO categories_statistics(category_id, parent_id, category_name, price, last_update)
-    VALUES (NEW.category_id, NEW.parent_id, NEW.category_name, NEW.price, NEW.last_update);
+    VALUES (NEW.category_id, NEW.parent_id, NEW.category_name, NEW.price, NEW.last_update)
+    ON CONFLICT ON CONSTRAINT entry_unique
+        DO UPDATE SET category_id = excluded.category_id, parent_id = excluded.parent_id,
+                      category_name = excluded.category_name, price = excluded.price,
+                      last_update = excluded.last_update;
     RETURN NEW;
 END;
 $$

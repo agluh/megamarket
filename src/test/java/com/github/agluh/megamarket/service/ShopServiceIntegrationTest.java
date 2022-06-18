@@ -5,8 +5,10 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import com.github.agluh.megamarket.dto.ShopUnit;
 import com.github.agluh.megamarket.dto.ShopUnitImport;
+import com.github.agluh.megamarket.dto.ShopUnitStatistic;
 import com.github.agluh.megamarket.dto.ShopUnitType;
 import com.github.agluh.megamarket.repository.exception.InvalidIdentityException;
+import com.github.agluh.megamarket.service.exceptions.IdentityIsNotUniqueException;
 import com.github.agluh.megamarket.service.exceptions.ShopUnitNotFoundException;
 import java.time.Instant;
 import java.util.Collection;
@@ -444,6 +446,40 @@ class ShopServiceIntegrationTest {
             // 2022-05-28T21:12:01.000Z - 1s = // 2022-05-28T21:12:00.000Z
             Arguments.of("2022-05-28T21:12:00.000Z", false, "after right range limit")
         );
+    }
+
+    @Test
+    void givenTreeOfSubcategories_whenImport_thenCategoriesShouldBePlacedToStatisticsOnce() {
+        // Given
+        final ShopUnitImport rootCategory = createCategory(null, "Root");
+        final ShopUnitImport subCategory = createCategory(rootCategory.getId(), "Sub category");
+        final ShopUnitImport offer = createOffer(subCategory.getId(), "Offer", 100);
+        final Instant date = Instant.parse("2022-06-13T10:30:00.000Z");
+
+        // When
+        shopService.importData(List.of(rootCategory, subCategory, offer), date);
+
+        // Then
+        Collection<ShopUnitStatistic> stat = shopService.getNodeStatistics(rootCategory.getId(), null, null);
+        then(stat).hasSize(1);
+    }
+
+    @Test
+    void givenElementsWithDuplicatedIds_whenImport_thenExceptionShouldBeThrown() {
+        // Given
+        final UUID id = UUID.fromString("915dbed0-e71f-11ec-8fea-0242ac120002");
+        final ShopUnitImport category = createCategory(null, "Category");
+        category.setId(id);
+        final ShopUnitImport offer = createOffer(null, "Offer", 100);
+        offer.setId(id);
+        final Instant date = Instant.parse("2022-06-13T10:30:00.000Z");
+
+        // When
+        final Throwable throwable = catchThrowable(() ->
+            shopService.importData(List.of(category, offer), date));
+
+        // Then
+        then(throwable).isInstanceOf(IdentityIsNotUniqueException.class);
     }
 
     private ShopUnitImport createOffer(UUID parentId, String name, long price) {
