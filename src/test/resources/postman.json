@@ -1,0 +1,1043 @@
+{
+	"info": {
+		"_postman_id": "ba6d49c0-2d11-42e0-914a-6b865b7f3229",
+		"name": "megamarket",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20540156"
+	},
+	"item": [
+		{
+			"name": "Import empty root category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"22b5b5e2-efb1-11ec-8ea0-0242ac120002\",\r\n            \"name\": \"Root category\",\r\n            \"type\": \"CATEGORY\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-05-28T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get root category",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Root category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-05-28T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.be.null;\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/22b5b5e2-efb1-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"22b5b5e2-efb1-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update root category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"22b5b5e2-efb1-11ec-8ea0-0242ac120002\",\r\n            \"name\": \"Updated root category\",\r\n            \"type\": \"CATEGORY\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-05-30T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get updated root category",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Updated root category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-05-30T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.be.null;\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/22b5b5e2-efb1-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"22b5b5e2-efb1-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import offer without parent",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"a603da32-efb6-11ec-8ea0-0242ac120002\",\r\n            \"price\": 10,\r\n            \"name\": \"Offer\",\r\n            \"type\": \"OFFER\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-05-30T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get offer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"a603da32-efb6-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Offer\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"OFFER\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-05-30T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.be.eql(10);\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/a603da32-efb6-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"a603da32-efb6-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update offer",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"a603da32-efb6-11ec-8ea0-0242ac120002\",\r\n            \"price\": 30,\r\n            \"name\": \"Updated offer\",\r\n            \"type\": \"OFFER\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-06-01T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get updated offer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"a603da32-efb6-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Updated offer\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"OFFER\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-06-01T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.be.eql(30);\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/a603da32-efb6-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"a603da32-efb6-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get root category unaffected",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Updated root category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-05-30T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.be.null;\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/22b5b5e2-efb1-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"22b5b5e2-efb1-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Move offer to root category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"a603da32-efb6-11ec-8ea0-0242ac120002\",\r\n            \"parentId\": \"22b5b5e2-efb1-11ec-8ea0-0242ac120002\",\r\n            \"price\": 50,\r\n            \"name\": \"Moved offer\",\r\n            \"type\": \"OFFER\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-06-02T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get root category affected",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Updated root category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-06-02T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.eql(50);\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.lengthOf(1);\r",
+							"});\r",
+							"\r",
+							"const offer = jsonData.children[0];\r",
+							"pm.test(\"Test offer\", () => {\r",
+							"    pm.expect(offer).to.be.an(\"object\");\r",
+							"    pm.expect(offer.id).to.eql(\"a603da32-efb6-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(offer.name).to.eql(\"Moved offer\");\r",
+							"    pm.expect(offer.type).to.eql(\"OFFER\");\r",
+							"    pm.expect(offer.date).to.eql(\"2022-06-02T21:12:01.000Z\");\r",
+							"    pm.expect(offer.price).to.be.eql(50);\r",
+							"    pm.expect(offer.parentId).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(offer.children).to.be.null;    \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/22b5b5e2-efb1-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"22b5b5e2-efb1-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete offer",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/delete/a603da32-efb6-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delete",
+						"a603da32-efb6-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get root category affected",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Updated root category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-06-02T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.be.null;\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.empty\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/22b5b5e2-efb1-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"22b5b5e2-efb1-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import offers to root category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"a603da32-efb6-11ec-8ea0-0242ac120002\",\r\n            \"parentId\": \"22b5b5e2-efb1-11ec-8ea0-0242ac120002\",\r\n            \"price\": 10,\r\n            \"name\": \"Offer\",\r\n            \"type\": \"OFFER\"\r\n        },\r\n        {\r\n            \"id\": \"eba5dd1c-efb9-11ec-8ea0-0242ac120002\",\r\n            \"parentId\": \"22b5b5e2-efb1-11ec-8ea0-0242ac120002\",\r\n            \"price\": 5,\r\n            \"name\": \"Offer\",\r\n            \"type\": \"OFFER\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-06-03T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get root category affected",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Updated root category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-06-03T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.eql(7);\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.lengthOf(2);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/22b5b5e2-efb1-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"22b5b5e2-efb1-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import sub category to root category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"65232316-efba-11ec-8ea0-0242ac120002\",\r\n            \"parentId\": \"22b5b5e2-efb1-11ec-8ea0-0242ac120002\",\r\n            \"name\": \"Sub category\",\r\n            \"type\": \"CATEGORY\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-06-06T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get root category affected",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Updated root category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-06-03T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.eql(7);\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.lengthOf(3);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/22b5b5e2-efb1-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"22b5b5e2-efb1-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update offers within root category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"a603da32-efb6-11ec-8ea0-0242ac120002\",\r\n            \"parentId\": \"22b5b5e2-efb1-11ec-8ea0-0242ac120002\",\r\n            \"price\": 5,\r\n            \"name\": \"Offer\",\r\n            \"type\": \"OFFER\"\r\n        },\r\n        {\r\n            \"id\": \"eba5dd1c-efb9-11ec-8ea0-0242ac120002\",\r\n            \"parentId\": \"22b5b5e2-efb1-11ec-8ea0-0242ac120002\",\r\n            \"price\": 10,\r\n            \"name\": \"Offer\",\r\n            \"type\": \"OFFER\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-06-08T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get root category affected",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Updated root category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-06-08T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.eql(7);\r",
+							"    pm.expect(jsonData.parentId).to.be.null;\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.lengthOf(3);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/22b5b5e2-efb1-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"22b5b5e2-efb1-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Move offers to sub category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Empty body\", function () {\r",
+							"    pm.response.to.not.be.withBody;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"a603da32-efb6-11ec-8ea0-0242ac120002\",\r\n            \"parentId\": \"65232316-efba-11ec-8ea0-0242ac120002\",\r\n            \"price\": 5,\r\n            \"name\": \"Offer\",\r\n            \"type\": \"OFFER\"\r\n        },\r\n        {\r\n            \"id\": \"eba5dd1c-efb9-11ec-8ea0-0242ac120002\",\r\n            \"parentId\": \"65232316-efba-11ec-8ea0-0242ac120002\",\r\n            \"price\": 10,\r\n            \"name\": \"Offer\",\r\n            \"type\": \"OFFER\"\r\n        }\r\n    ],\r\n    \"updateDate\": \"2022-06-09T21:12:01.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/imports",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"imports"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get sub category affected",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Test response properties\", () => {\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.id).to.eql(\"65232316-efba-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.name).to.eql(\"Sub category\");\r",
+							"    pm.expect(jsonData.type).to.eql(\"CATEGORY\");\r",
+							"    pm.expect(jsonData.date).to.eql(\"2022-06-09T21:12:01.000Z\");\r",
+							"    pm.expect(jsonData.price).to.eql(7);\r",
+							"    pm.expect(jsonData.parentId).to.eql(\"22b5b5e2-efb1-11ec-8ea0-0242ac120002\");\r",
+							"    pm.expect(jsonData.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.children).to.be.lengthOf(2);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/nodes/65232316-efba-11ec-8ea0-0242ac120002",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"nodes",
+						"65232316-efba-11ec-8ea0-0242ac120002"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "localhost:8080",
+			"type": "string"
+		}
+	]
+}
