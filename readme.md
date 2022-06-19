@@ -18,13 +18,13 @@
 ```
 
 ### Развёртывание
-Для сборки приложения используется Maven Wrapper:
+Для сборки приложения используется Maven Wrapper (без запуска тестов):
 ```
-./mvnw clean package
+./mvnw clean package -Dmaven.test.skip
 ```
 Или под Windows:
 ```
-mvnw.cmd clean package
+mvnw.cmd clean package -Dmaven.test.skip
 ```
 
 Для запуска приложения и БД используется docker-compose
