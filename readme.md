@@ -1,5 +1,5 @@
 # Бэкенд для веб-сервиса сравнения цен, аналогичный сервису Яндекс Товары
-![Maven Tests](https://github.com/agluh/megamarket/actions/workflows/test.yml/badge.svg)
+![Maven Tests](https://github.com/agluh/megamarket/actions/workflows/test.yaml/badge.svg)
 
 Приложение написано в качестве вступительного задания в Летнюю Школу Бэкенд Разработки Яндекса 2022.
 
