@@ -26,7 +26,12 @@ public class ShopUnitSerializer extends JsonSerializer<ShopUnit> {
         jsonGenerator.writeObjectField("type", shopUnit.getType());
         jsonGenerator.writeObjectField("parentId", shopUnit.getParentId());
         jsonGenerator.writeStringField("date", ISO8601_DATE_TIME.format(shopUnit.getDate()));
-        jsonGenerator.writeNumberField("price", shopUnit.getPrice());
+
+        if (shopUnit.getPrice() != null) {
+            jsonGenerator.writeNumberField("price", shopUnit.getPrice());
+        } else {
+            jsonGenerator.writeObjectField("price", null);
+        }
 
         if (shopUnit.isCategory()) {
             jsonGenerator.writeArrayFieldStart("children");
