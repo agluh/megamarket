@@ -130,13 +130,17 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 FROM categories
                 WHERE category_id IN ( -- Start recursion here
                 
-                    /* Here we select all element that was moved to other location */
+                    /* Here we select all elements that was moved to other locations */
                     SELECT prev_category_id AS category_id FROM offers
                     WHERE prev_category_id <> category_id
+                        OR (prev_category_id IS NULL AND category_id IS NOT NULL)
+                        OR (prev_category_id IS NOT NULL AND category_id IS NULL)
                     UNION
                         SELECT prev_parent_id AS category_id FROM categories
-                        WHERE prev_parent_id <> parent_id
-                        AND price IS NOT NULL  -- Here we ignore moving of empty categories
+                        WHERE (prev_parent_id <> parent_id
+                            OR (prev_parent_id IS NULL AND parent_id IS NOT NULL)
+                            OR (prev_parent_id IS NOT NULL AND parent_id IS NULL))
+                            AND price IS NOT NULL  -- Here we ignore moving of empty categories
                 )
                 UNION
                     SELECT categories.category_id, categories.parent_id
@@ -150,10 +154,14 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public static final String UPDATE_MOVED_OFFERS = """
         UPDATE offers SET prev_category_id = category_id
         WHERE prev_category_id <> category_id
+            OR (prev_category_id IS NULL AND category_id IS NOT NULL)
+            OR (prev_category_id IS NOT NULL AND category_id IS NULL)
         """;
     public static final String UPDATE_MOVED_CATEGORIES = """
         UPDATE categories SET prev_parent_id = parent_id
         WHERE prev_parent_id <> parent_id
+            OR (prev_parent_id IS NULL AND parent_id IS NOT NULL)
+            OR (prev_parent_id IS NOT NULL AND parent_id IS NULL)
         """;
 
     private final NamedParameterJdbcTemplate namedJdbcTemplate;

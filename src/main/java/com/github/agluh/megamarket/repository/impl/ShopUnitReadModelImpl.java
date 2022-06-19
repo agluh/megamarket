@@ -112,7 +112,7 @@ public class ShopUnitReadModelImpl implements ShopUnitReadModel {
 
     @Override
     public Collection<ShopUnit> getNodeWithSubtree(UUID nodeId) {
-        return  namedJdbcTemplate.query(
+        return namedJdbcTemplate.query(
             SELECT_NODE_SUBTREE,
             Map.of("node_id", nodeId),
             this::mapRowToObject
