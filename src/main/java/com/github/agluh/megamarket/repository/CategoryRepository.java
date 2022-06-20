@@ -1,7 +1,6 @@
 package com.github.agluh.megamarket.repository;
 
 import com.github.agluh.megamarket.model.Category;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -14,21 +13,7 @@ public interface CategoryRepository {
 
     void delete(UUID categoryId);
 
-    /**
-     * Updates price for all upstream categories starting with {@code categoryId}.
-     *
-     * <p>Dates on any elements are not updated.
-     */
-    void updateUpstreamCategoriesPricesStartingWith(UUID categoryId);
+    Collection<Category> findByIds(Collection<UUID> ids);
 
-    /**
-     * Updates price and date for all upstream categories starting
-     * with each node from {@code categoryIds}.
-     */
-    void updateCategoriesPricesAndDates(Collection<UUID> categoryIds, Instant updateDate);
-
-    /**
-     * Updates price and date in each category that has lost some of their children.
-     */
-    void updatePricesAndDatesOfOrphanedCategories(Instant updateDate);
+    Collection<Category> getAllUpstreamCategories(Collection<UUID> ids);
 }

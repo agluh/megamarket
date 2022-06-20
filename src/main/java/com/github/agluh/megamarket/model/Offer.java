@@ -18,7 +18,7 @@ public class Offer {
 
     private final String name;
 
-    private final Long price;
+    private final long price;
 
     private final Instant date;
 }

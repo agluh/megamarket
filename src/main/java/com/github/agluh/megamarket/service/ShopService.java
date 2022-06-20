@@ -23,8 +23,10 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,12 +38,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ShopService {
 
     private final OfferRepository offerRepository;
-
     private final CategoryRepository categoryRepository;
-
     private final ShopUnitReadModel shopUnitReadModel;
-
-    private final ShopUnitStatisticReadModel statisticRepository;
+    private final ShopUnitStatisticReadModel statisticReadModel;
 
     /**
      * Imports data into catalog.
@@ -66,34 +65,23 @@ public class ShopService {
     public void importData(Collection<ShopUnitImport> items, Instant updateDate) {
         ensureIdUniqueness(items);
 
-        List<Category> categories = items.stream()
+        Collection<Category> cats = items.stream()
             .filter(ShopUnitImport::isCategory)
             .map(e -> e.toCategory(updateDate))
-            .toList();
-
-        if (!categories.isEmpty()) {
-            categoryRepository.save(orderByDependency(categories));
-        }
-
-        List<Offer> offers = items.stream()
-            .filter(ShopUnitImport::isOffer)
-            .map(e -> e.toOffer(updateDate))
-            .toList();
-
-        if (!offers.isEmpty()) {
-            offerRepository.save(offers);
-        }
-
-        Set<UUID> affectedCategoriesIds = offers.stream()
-            .map(Offer::getParentId)
-            .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
-        if (!affectedCategoriesIds.isEmpty()) {
-            categoryRepository.updateCategoriesPricesAndDates(affectedCategoriesIds, updateDate);
-        }
+        Collection<Offer> offers = items.stream()
+            .filter(ShopUnitImport::isOffer)
+            .map(e -> e.toOffer(updateDate))
+            .collect(Collectors.toSet());
 
-        categoryRepository.updatePricesAndDatesOfOrphanedCategories(updateDate);
+        final Set<UUID> affectedCatsIds = getCategoriesWithUpdatedPrice(offers, cats);
+
+        categoryRepository.save(orderByDependency(cats));
+
+        offerRepository.save(offers);
+
+        updateCategoriesPrice(affectedCatsIds, updateDate);
     }
 
     /**
@@ -138,7 +126,7 @@ public class ShopService {
 
         UUID parentId = node.getParentId();
         if (parentId != null) {
-            categoryRepository.updateUpstreamCategoriesPricesStartingWith(parentId);
+            updateCategoriesPrice(List.of(parentId), null);
         }
     }
 
@@ -150,10 +138,13 @@ public class ShopService {
         return shopUnitReadModel.getOffersUpdatedBetween(from, now);
     }
 
+    /**
+     * Returns list of node statistics.
+     */
     public Collection<ShopUnitStatistic> getNodeStatistics(UUID nodeId, Instant fromIncluding,
             Instant toExcluding) {
         shopUnitReadModel.getNode(nodeId).orElseThrow(ShopUnitNotFoundException::new);
-        return statisticRepository.getNodeStatistics(nodeId, fromIncluding, toExcluding);
+        return statisticReadModel.getNodeStatistics(nodeId, fromIncluding, toExcluding);
     }
 
     /**
@@ -237,6 +228,9 @@ public class ShopService {
         return orderedCategories;
     }
 
+    /**
+     * Checks if all IDs in importing collection are unique.
+     */
     private void ensureIdUniqueness(Collection<ShopUnitImport> items) {
         Map<UUID, ShopUnitImport> map = new HashMap<>();
 
@@ -247,5 +241,87 @@ public class ShopService {
                 map.put(item.getId(), item);
             }
         });
+    }
+
+    /**
+     * Updates price and date (if passed) for list of collection IDs.
+     */
+    private void updateCategoriesPrice(Collection<UUID> catsIds, @Nullable Instant updateDate) {
+        Collection<Category> categories =
+            categoryRepository.getAllUpstreamCategories(catsIds);
+
+        for (Category c : categories) {
+            Long avgPrice = offerRepository.getAvgPriceOfCategory(c.getId());
+            c.setPrice(avgPrice);
+
+            if (updateDate != null) {
+                c.setDate(updateDate);
+            }
+        }
+
+        categoryRepository.save(categories);
+    }
+
+    /**
+     * Returns a list of IDs of categories that are affected in some way by
+     * offers importing.
+     *
+     * <p>Category consider affected in case:
+     * <ul>
+     * <li>it has new offers</li>
+     * <li>some offers has been removed from it</li>
+     * <li>price of any offer has been changed</li>
+     * </ul>
+     */
+    private Set<UUID> getCategoriesWithUpdatedPrice(Collection<Offer> importingOffers,
+            Collection<Category> importingCategories) {
+        Collection<Offer> oldOffers = offerRepository.findByIds(
+            importingOffers.stream().map(Offer::getId).toList());
+        Map<UUID, Offer> oldOffersMap =
+            oldOffers.stream().collect(Collectors.toMap(Offer::getId, Function.identity()));
+        List<UUID> affectedCats = new ArrayList<>();
+
+        for (Offer o : importingOffers) {
+            UUID parentId = o.getParentId();
+
+            if (oldOffersMap.containsKey(o.getId())) {
+                Offer old = oldOffersMap.get(o.getId());
+                UUID oldParentId = old.getParentId();
+
+                if (Objects.equals(parentId, oldParentId)) {
+                    if (o.getPrice() != old.getPrice()) {
+                        affectedCats.add(parentId);
+                    }
+                } else {
+                    affectedCats.add(parentId);
+                    affectedCats.add(oldParentId);
+                }
+            } else {
+                affectedCats.add(parentId);
+            }
+        }
+
+        Collection<Category> oldCats = categoryRepository.findByIds(
+            importingCategories.stream().map(Category::getId).toList());
+        Map<UUID, Category> oldCatsMap =
+            oldCats.stream().collect(Collectors.toMap(Category::getId, Function.identity()));
+
+        for (Category c : importingCategories) {
+            UUID parentId = c.getParentId();
+
+            if (oldCatsMap.containsKey(c.getId())) {
+                Category old = oldCatsMap.get(c.getId());
+                UUID oldParentId = old.getParentId();
+
+                if (!Objects.equals(parentId, oldParentId) && old.getPrice() != null) {
+                    affectedCats.add(c.getId());
+                    affectedCats.add(oldParentId);
+                }
+            }
+        }
+
+        return affectedCats.stream()
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 }

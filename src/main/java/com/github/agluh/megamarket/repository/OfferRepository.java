@@ -12,4 +12,8 @@ public interface OfferRepository {
     void save(Collection<Offer> offers);
 
     void delete(UUID offerId);
+
+    Collection<Offer> findByIds(Collection<UUID> ids);
+
+    Long getAvgPriceOfCategory(UUID categoryId);
 }

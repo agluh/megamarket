@@ -2,11 +2,12 @@ package com.github.agluh.megamarket.model;
 
 import java.time.Instant;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Category {
@@ -18,7 +19,9 @@ public class Category {
 
     private final String name;
 
-    private final Long price;
+    @Setter
+    private Long price;
 
-    private final Instant date;
+    @Setter
+    private Instant date;
 }
