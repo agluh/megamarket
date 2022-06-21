@@ -29,7 +29,8 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 public class ShopController {
 
-    public static final String ISO8601_DATE_TIME = "uuuu-MM-dd'T'HH:mm:ss[.SSS][XXX][XX][X]";
+    public static final String ISO8601_DATE_TIME
+        = "uuuu-MM-dd'T'HH:mm:ss[.SSS][.SS][.S][XXX][XX][X]";
 
     private final ShopService shopService;
 

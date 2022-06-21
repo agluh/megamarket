@@ -21,6 +21,6 @@ public class ShopUnitImportRequest {
     private List<ShopUnitImport> items;
 
     @NotNull
-    @JsonFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss[.SSS][XXX][XX][X]")
+    @JsonFormat(pattern = "uuuu-MM-dd'T'HH:mm:ss[.SSS][.SS][.S][XXX][XX][X]")
     private Instant updateDate;
 }
