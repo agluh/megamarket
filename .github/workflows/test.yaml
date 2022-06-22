@@ -74,6 +74,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
       - name: Install Node
         uses: actions/setup-node@v1
         with:
@@ -101,3 +106,6 @@ jobs:
 
       - name: Run Postman tests
         run: newman run ./src/test/resources/postman.json -r cli
+
+      - name: Run Python tests
+        run: python ./src/test/resources/unit_test.py
