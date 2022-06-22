@@ -22,13 +22,13 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ShopUnitStatisticReadModelImpl implements ShopUnitStatisticReadModel {
 
-    public static final String SELECT_NODES = """
+    private static final String SELECT_NODES = """
         SELECT element_id, parent_id, element_name, price, last_update, element_type
         FROM common_statistics
         WHERE element_id = :node_id
         """;
-    public static final String WHERE_DATE_AFTER_OR_EQUALS = " AND last_update >= :from";
-    public static final String WHERE_DATE_BEFORE = " AND last_update < :to";
+    private static final String WHERE_DATE_AFTER_OR_EQUALS = " AND last_update >= :from";
+    private static final String WHERE_DATE_BEFORE = " AND last_update < :to";
 
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ShopUnitReadModelImpl implements ShopUnitReadModel {
 
-    public static final String SELECT_NODE = """
+    private static final String SELECT_NODE = """
         /* Here we're trying to find category by passed ID */
         SELECT
             category_id AS element_id,
@@ -47,7 +47,7 @@ public class ShopUnitReadModelImpl implements ShopUnitReadModel {
             FROM offers
             WHERE offer_id = :node_id
         """;
-    public static final String SELECT_NODE_SUBTREE = """
+    private static final String SELECT_NODE_SUBTREE = """
         /* Here we just describe a table of all subcategories of category with passed ID */
         WITH RECURSIVE tree AS (
             SELECT category_id, parent_id, category_name, price, last_update
@@ -95,7 +95,7 @@ public class ShopUnitReadModelImpl implements ShopUnitReadModel {
                 FROM offers o
                 WHERE offer_id = :node_id
         """;
-    public static final String SELECT_OFFERS_UPDATED_BETWEEN = """
+    private static final String SELECT_OFFERS_UPDATED_BETWEEN = """
         SELECT
             offer_id AS element_id,
             category_id AS parent_id,

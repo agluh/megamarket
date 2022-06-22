@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class OfferRepositoryImpl implements OfferRepository {
 
-    public static final String INSERT_OFFERS = """
+    private static final String INSERT_OFFERS = """
         INSERT INTO offers (offer_id, category_id, offer_name, price, last_update)
         VALUES (?, ?, ?, ?, ?)
         ON CONFLICT (offer_id) DO UPDATE
@@ -35,14 +35,14 @@ public class OfferRepositoryImpl implements OfferRepository {
             price = EXCLUDED.price,
             last_update = EXCLUDED.last_update
         """;
-    public static final String DELETE_OFFER =
+    private static final String DELETE_OFFER =
         "DELETE FROM offers WHERE offer_id = ?";
-    public static final String SELECT_OFFERS = """
+    private static final String SELECT_OFFERS = """
         SELECT offer_id, category_id, offer_name, price, last_update
         FROM offers
         WHERE offer_id IN (:ids)
         """;
-    public static final String SELECT_AVG_PRICE = """
+    private static final String SELECT_AVG_PRICE = """
         WITH RECURSIVE sub_offers AS (
             SELECT category_id, parent_id
             FROM categories

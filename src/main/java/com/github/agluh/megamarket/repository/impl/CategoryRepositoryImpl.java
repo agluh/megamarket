@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class CategoryRepositoryImpl implements CategoryRepository {
 
-    public static final String INSERT_CATEGORIES = """
+    private static final String INSERT_CATEGORIES = """
         INSERT INTO categories (category_id, parent_id, category_name, price, last_update)
         VALUES (?, ?, ?, ?, ?)
         ON CONFLICT (category_id) DO UPDATE
@@ -35,14 +35,14 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             price = EXCLUDED.price,
             last_update = EXCLUDED.last_update
         """;
-    public static final String DELETE_CATEGORY =
+    private static final String DELETE_CATEGORY =
         "DELETE FROM categories WHERE category_id = ?";
-    public static final String SELECT_CATEGORIES = """
+    private static final String SELECT_CATEGORIES = """
         SELECT category_id, parent_id, category_name, price, last_update
         FROM categories
         WHERE category_id IN (:ids)
         """;
-    public static final String SELECT_PARENTS = """
+    private static final String SELECT_PARENTS = """
         WITH RECURSIVE parents AS (
             SELECT category_id, parent_id, category_name, price, last_update
             FROM categories
